@@ -7,12 +7,12 @@ let currentAction = null;
 let continuousMode = false;
 let activeLegend = null;
 
-let originButton = document.getElementById('setOriginBtn');
+let yMinButton = document.getElementById('setYMinBtn');
 let xPointsButton = document.getElementById('setXPointsBtn');
 let yMaxButton = document.getElementById('setYMaxBtn');
 
 function activateButton(button) {
-    originButton.classList.remove('active');
+    yMinButton.classList.remove('active');
     xPointsButton.classList.remove('active');
     yMaxButton.classList.remove('active');
     button?.classList.add('active');
@@ -61,10 +61,10 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function setOrigin() {
-    currentAction = 'setOrigin';
+function setYMin() {
+    currentAction = 'setYMin';
     continuousMode = true;
-    activateButton(originButton);
+    activateButton(yMinButton);
 }
 
 function setXPoints() {
@@ -143,9 +143,9 @@ canvas.addEventListener('click', function(e) {
         if (currentAction === 'legend' && activeLegend) {
             let legend = images[currentIndex].legends.find(leg => leg.label === activeLegend);
             performAction(x, y, legend.label, legend.color);
-        } else if (['setXPoints', 'setYMax'].includes(currentAction)) {
-            let value = prompt(`Enter value for ${currentAction === 'setXPoints' ? 'X Point' : 'Y Max'}`);
-            let label = `${currentAction === 'setXPoints' ? 'X=' + value : 'Ymax=' + value}`;
+        } else if (['setXPoints', 'setYMax', 'setYMin'].includes(currentAction)) {
+            let value = prompt(`Enter value for ${currentAction === 'setXPoints' ? 'X Point' : currentAction === 'setYMax' ? 'Y Max' : 'Y Min'}`);
+            let label = `${currentAction === 'setXPoints' ? 'X=' + value : currentAction === 'setYMax' ? 'Ymax=' + value : 'Ymin=' + value}`;
             performAction(x, y, label);
         } else {
             performAction(x, y, currentAction);
@@ -155,11 +155,8 @@ canvas.addEventListener('click', function(e) {
 
 function performAction(x, y, label, color = null) {
     if (!color) {
-        if (label.startsWith('X=') || label.startsWith('Ymax=')) {
-            color = label.startsWith('X=') ? '#0000ff' : '#00ff00';
-        } else if (label === 'setOrigin') {
-            color = '#ff2626'; // Red for origin
-            label = 'Origin';
+        if (label.startsWith('X=') || label.startsWith('Ymax=') || label.startsWith('Ymin=')) {
+            color = label.startsWith('X=') ? '#0000ff' : label.startsWith('Ymax=') ? '#00ff00' : '#ff00ff';
         }
     }
     images[currentIndex].operations.push({ x: x, y: y, label: label, color: color });
@@ -195,5 +192,3 @@ function displayData(data) {
     let dataDisplay = document.getElementById('dataDisplay');
     dataDisplay.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
 }
-
-
