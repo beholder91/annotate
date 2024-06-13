@@ -13,39 +13,87 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
         }
         canvas {
-            border: 1px solid #000000;
+            border: 2px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
+            margin-right: 100px; /* Slightly move the canvas to the left */
         }
         #controls {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-right: 100px;
         }
-        button, input[type="file"] {
-            margin: 5px;
+        button, input[type="file"], select {
+            margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        input[type="file"]{
+            position: absolute;
+            top: 0px;
+            left: 20px
+        }
+        button:hover, input[type="file"]:hover, select:hover {
+            background-color: #ddd;
+            transform: translateY(-2px);
+        }
+        button:active, input[type="file"]:active, select:active {
+            background-color: #ccc;
+            transform: translateY(0);
         }
         .active {
             background-color: #555; /* Dark grey background for active button */
             color: white;
         }
+        #legendContainer, #dataDisplay {
+            position: absolute;
+            padding: 15px; /* Slightly larger padding */
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #legendContainer {
+            right: 150px; /* Move the legend container slightly away from the edge */
+            top: 120px;
+        }
+        #dataDisplay {
+            right: 40px; /* Move the data display slightly away from the edge */
+            bottom: 40px; /* Increase bottom margin */
+            width: 300px; /* Increase the width of the data display */
+        }
     </style>
 </head>
 <body>
     <input type="file" id="file-input" multiple accept="image/*">
-    <canvas id="graphCanvas" width="1080" height="720"></canvas>
+    <div style="display: flex; justify-content: center; align-items: flex-start;">
+        <canvas id="graphCanvas" width="1080" height="720"></canvas>
+        <div id="dataDisplay"></div>
+    </div>
     <div id="controls">
+        <select id="axisSelect">
+            <option value="left">Left Axis</option>
+            <option value="right">Right Axis</option>
+        </select>
         <button id="setYMinBtn" onclick="setYMin()">Set Y-min</button>
-        <button id="setXPointsBtn" onclick="setXPoints()">Set X-axis Points</button>
         <button id="setYMaxBtn" onclick="setYMax()">Set Y-max</button>
+        <button id="setXPointsBtn" onclick="setXPoints()">Set X-axis Points</button>
         <button onclick="clearCanvas()">Clear</button>
         <button onclick="addLegend()">Add Legend</button>
         <button id="exportDataBtn" onclick="exportData()">Export Data</button>
         <button onclick="undo()">Undo</button>
     </div>
-    <div id="legendContainer" style="position: absolute; right: 20px; top: 100px;"></div>
-    <div id="dataDisplay" style="position: absolute; right: 20px; bottom: 20px;"></div>
+    <div id="legendContainer"></div>
     <script src="annotate.js"></script>
 </body>
 </html>
