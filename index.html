@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Annotation Tool</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 1px solid #000000;
+            margin-top: 20px;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        button, input[type="file"] {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .active {
+            background-color: #555; /* Dark grey background for active button */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="file-input" multiple accept="image/*">
+    <canvas id="graphCanvas" width="1080" height="720"></canvas>
+    <div id="controls">
+        <button id="setOriginBtn" onclick="setOrigin()">Set Origin</button>
+        <button id="setXPointsBtn" onclick="setXPoints()">Set X-axis Points</button>
+        <button id="setYMaxBtn" onclick="setYMax()">Set Y-max</button>
+        <button onclick="clearCanvas()">Clear</button>
+        <button onclick="addLegend()">Add Legend</button>
+        <button id="exportDataBtn" onclick="exportData()">Export Data</button>
+        <button onclick="undo()">Undo</button>
+    </div>
+    <div id="legendContainer" style="position: absolute; right: 20px; top: 100px;"></div>
+    <div id="dataDisplay" style="position: absolute; right: 20px; bottom: 20px;"></div>
+    <script src="annotate.js"></script>
+</body>
+</html>
