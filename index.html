@@ -20,7 +20,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
-            margin-right: 100px; /* Slightly move the canvas to the left */
+            margin-right: 100px;
         }
         #controls {
             margin-top: 20px;
@@ -53,24 +53,24 @@
             transform: translateY(0);
         }
         .active {
-            background-color: #555; /* Dark grey background for active button */
+            background-color: #555;
             color: white;
         }
         #legendContainer, #dataDisplay {
             position: absolute;
-            padding: 15px; /* Slightly larger padding */
+            padding: 15px;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         #legendContainer {
-            right: 150px; /* Move the legend container slightly away from the edge */
+            right: 150px;
             top: 120px;
         }
         #dataDisplay {
-            right: 40px; /* Move the data display slightly away from the edge */
-            bottom: 40px; /* Increase bottom margin */
-            width: 300px; /* Increase the width of the data display */
+            right: 40px;
+            bottom: 40px;
+            width: 300px;
         }
     </style>
 </head>
@@ -88,6 +88,7 @@
         <button id="setYMinBtn" onclick="setYMin()">Set Y-min</button>
         <button id="setYMaxBtn" onclick="setYMax()">Set Y-max</button>
         <button id="setXPointsBtn" onclick="setXPoints()">Set X-axis Points</button>
+        <button id="createXLabelsBtn" onclick="createXLabels()">Create X-axis Labels</button>
         <button onclick="clearCanvas()">Clear</button>
         <button onclick="addLegend()">Add Legend</button>
         <button id="exportDataBtn" onclick="exportData()">Export Data</button>
