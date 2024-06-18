@@ -20,14 +20,14 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
-            margin-right: 100px;
         }
         #controls {
+            width: calc(100% - 40px); /* Restrict maximum width */
+            max-width: 1080px; /* Same as canvas width */
             margin-top: 20px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            margin-right: 100px;
         }
         button, input[type="file"], select {
             margin: 10px;
@@ -39,10 +39,10 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
         }
-        input[type="file"]{
+        input[type="file"] {
             position: absolute;
             top: 0px;
-            left: 20px
+            left: 20px;
         }
         button:hover, input[type="file"]:hover, select:hover {
             background-color: #ddd;
@@ -64,20 +64,85 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         #legendContainer {
-            right: 150px;
-            top: 120px;
+            left: 20px;
+            bottom: 40px;
         }
         #dataDisplay {
             right: 40px;
             bottom: 40px;
             width: 300px;
         }
+        #dataInputContainer {
+            position: absolute;
+            left: 20px;
+            top: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #dataInput {
+            width: 300px;
+            height: 200px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #333;
+            resize: both;
+            overflow: auto;
+        }
+        #fileListContainer {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #fileListContainer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #fileListContainer li {
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        #fileListContainer li:hover {
+            background-color: #ddd;
+            transform: translateY(-2px);
+        }
+        #fileListContainer li.active {
+            background-color: #555;
+            color: white;
+        }
+        #saveButtonContainer {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #errorMessage {
+            color: red;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
-    <input type="file" id="file-input" multiple accept="image/*">
+    <input type="file" id="file-input" webkitdirectory multiple accept="image/*">
     <div style="display: flex; justify-content: center; align-items: flex-start;">
         <canvas id="graphCanvas" width="1080" height="720"></canvas>
+        <div id="dataInputContainer">
+            <textarea id="dataInput" placeholder="Data will be displayed here"></textarea>
+            <div id="saveButtonContainer">
+                <button id="saveButton">Save</button>
+                <span id="errorMessage"></span>
+            </div>
+        </div>
         <div id="dataDisplay"></div>
     </div>
     <div id="controls">
@@ -89,12 +154,18 @@
         <button id="setYMaxBtn" onclick="setYMax()">Set Y-max</button>
         <button id="setXPointsBtn" onclick="setXPoints()">Set X-axis Points</button>
         <button id="createXLabelsBtn" onclick="createXLabels()">Create X-axis Labels</button>
-        <button onclick="clearCanvas()">Clear</button>
         <button onclick="addLegend()">Add Legend</button>
+        <button id="preAnnotateBtn">Pre-Annotate</button>
         <button id="exportDataBtn" onclick="exportData()">Export Data</button>
         <button onclick="undo()">Undo</button>
+        <button onclick="clearCanvas()">Clear</button>
+        <button id="prevImageBtn">Previous Image</button>
+        <button id="nextImageBtn">Next Image</button>
     </div>
     <div id="legendContainer"></div>
+    <div id="fileListContainer">
+        <ul id="fileList"></ul>
+    </div>
     <script src="annotate.js"></script>
 </body>
 </html>
