@@ -38,31 +38,48 @@ function activateButton(button) {
     button?.classList.add('active');
 }
 
-// 处理文件输入变化
-fileInput.addEventListener('change', function(e) {
-    const files = Array.from(e.target.files).filter(file => file.type.startsWith('image/')).sort((a, b) => a.name.localeCompare(b.name));
+async function sortFiles(files) {
+    const response = await fetch('http://10.100.2.195:8107/sort_files/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ files: files })
+    });
+    const data = await response.json();
+    return data.sorted_files;
+}
+
+fileInput.addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files);
+    const fileNames = files.map(file => file.name);
+    const sortedFileNames = await sortFiles(fileNames);
+
     images = [];
     annotations = [];
     let loadedImages = 0;
-    for (const file of files) {
+
+    sortedFileNames.forEach((fileName, index) => {
+        const file = files.find(f => f.name === fileName);
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function(event) {
             const img = new Image();
             img.onload = function() {
-                images.push({ img: img, fileName: file.name });
-                annotations.push({ operations: [], legends: [], preAnnotateData: '', axisLabels: [] });
+                images[index] = { img: img, fileName: file.name };
+                annotations[index] = { operations: [], legends: [], preAnnotateData: '', axisLabels: [] };
                 loadedImages++;
-                if (loadedImages === files.length) {
+                if (loadedImages === sortedFileNames.length) {
                     currentIndex = 0;
                     drawImage(currentIndex);
                     populateFileList();
                 }
             };
-            img.src = e.target.result;
+            img.src = event.target.result;
         };
         reader.readAsDataURL(file);
-    }
+    });
 });
+
 
 function drawImage(index) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -93,6 +110,17 @@ function drawVerticalLine(x) {
     ctx.lineTo(x, canvas.height);
     ctx.stroke();
     ctx.setLineDash([]);
+}
+
+function updateActiveFile() {
+    let fileItems = document.querySelectorAll('#fileList li');
+    fileItems.forEach((item, index) => {
+        if (index === currentIndex) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
 }
 
 function clearCanvas() {
@@ -128,9 +156,9 @@ function createXLabels(axisList) {
     if (annotations[currentIndex]) {
         let xPointOperations = annotations[currentIndex].operations.filter(op => op.label.startsWith('X='));
         if (xPointOperations.length > 0 || !axisList) {
-            let labels = prompt('Enter labels for X points, separated by commas:', axisList ? axisList.join(',') : '');
+            let labels = prompt('Enter labels for X points, separated by ; (eng):', axisList ? axisList.join(';') : '');
             if (labels) {
-                let labelArray = labels.split(',').map(label => label.trim());
+                let labelArray = labels.split(';').map(label => label.trim());
                 for (let i = 0; i < xPointOperations.length && i < labelArray.length; i++) {
                     xPointOperations[i].label = `X=${labelArray[i]}`;
                 }
@@ -314,7 +342,7 @@ async function requestChartAnalysis() {
             let result = await response.json();
             if (result.data !== null) {
                 let jsonData = JSON.stringify(result.data, null, 2);
-                jsonData = jsonData.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+                jsonData = jsonData.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\/g, '');
                 annotations[currentIndex].preAnnotateData = jsonData;
                 annotations[currentIndex].axisLabels = result.axis || [];
                 displayPreAnnotateData(currentIndex);
@@ -340,6 +368,7 @@ function showPrevImage() {
         saveCurrentPreAnnotateData();
         currentIndex--;
         drawImage(currentIndex);
+        updateActiveFile();
     }
 }
 
@@ -348,8 +377,10 @@ function showNextImage() {
         saveCurrentPreAnnotateData();
         currentIndex++;
         drawImage(currentIndex);
+        updateActiveFile();
     }
 }
+
 
 function saveCurrentPreAnnotateData() {
     if (annotations[currentIndex]) {
@@ -366,9 +397,11 @@ function populateFileList() {
             saveCurrentPreAnnotateData();
             currentIndex = index;
             drawImage(currentIndex);
+            updateActiveFile();
         });
         fileList.appendChild(listItem);
     });
+    updateActiveFile();
 }
 
 function saveJson() {
